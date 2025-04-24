@@ -1,0 +1,17 @@
+{
+  "canisters": {
+    "token_ledger": {
+      "candid": "src/token_ledger/token_ledger.did",
+      "package": "token_ledger",
+      "type": "rust"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}

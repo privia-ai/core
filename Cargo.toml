@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "src/token_ledger"
+]
+resolver = "2"
