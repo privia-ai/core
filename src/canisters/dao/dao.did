@@ -1,0 +1,83 @@
+type Account = record { owner : principal; subaccount : opt blob };
+
+type ProposalType = variant  {
+  UpdateCode;
+  Generic;
+};
+
+type Proposal = record {
+    id: nat;
+    created_on: nat;
+    created_by: principal;
+    proposal_type: ProposalType;
+    votes: vec nat;
+    start: nat64;
+    end: nat64
+};
+
+type VoteOption = variant {
+  Yes;
+  No;
+};
+
+type Vote = record {
+  id: nat;
+  created_on: nat;
+  created_by: principal;
+  proposal_id: nat;
+  result: VoteOption;
+};
+
+type Timestamp = nat64;
+
+type CyclesConfig = record {
+  hiving_cycles: nat64;
+  voting_cycles: nat64;
+  genesis: opt Timestamp;
+  cycle_len_ns: nat64;
+};
+
+type StakingConfig = record {
+  // Empty struct
+};
+
+type DiscountConfig = record {
+    discounts_per_cycle: nat;
+};
+
+type AppConfig = record {
+  staking: StakingConfig;
+  cycles: CyclesConfig;
+  discounts: DiscountConfig;
+  token_canister_id: principal;
+  nft_canister_id: principal;
+};
+
+type Discount = record {
+  id: nat;
+  max_price: nat;
+  value: nat32;
+  owner: Account
+};
+
+type Cycle = record {
+    number: nat64;
+    start: Timestamp;
+    end: Timestamp;
+};
+
+service : (AppConfig) -> {
+    voting_create_proposal : (ProposalType, vec nat8) -> (nat);
+    voting_get_proposal : (nat) -> (opt Proposal) query;
+    voting_vote : (nat, VoteOption) -> (nat);
+    voting_get_vote : (nat) -> (opt Vote) query;
+    voting_get_all_votes : (nat) -> (vec Vote) query;
+
+    get_current_cycle: () -> (Cycle) query;
+
+    get_staking_score: (Account) -> (nat);
+
+    calculate_discount: (Account, nat) -> (float32);
+    mint_discount: (Discount) -> (nat);
+    get_discount: (nat) -> (Discount);
+}

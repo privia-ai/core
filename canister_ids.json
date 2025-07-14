@@ -1,5 +1,11 @@
 {
-  "token_ledger": {
-    "ic": "jd6i4-eqaaa-aaaaf-qaozq-cai"
+  "dao": {
+    "ic": "wycdl-gaaaa-aaaac-qbfea-cai"
+  },
+  "nft": {
+    "ic": "xsnbr-eqaaa-aaaac-qbfda-cai"
+  },
+  "token": {
+    "ic": "x3okn-syaaa-aaaac-qbfcq-cai"
   }
 }

@@ -1,0 +1,17 @@
+[package]
+name = "nft"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+candid = "0.10.14"
+ic-cdk = "0.18.5"
+ic-stable-structures = "0.6.9"
+icrc-ledger-types = "0.1.10"
+serde = { version = "1.0.219", features = ["derive"] }
+serde_json = "1.0.140"
+abstractions = { path = "../../shared/abstractions" }
+canister-runtime = { path = "../../shared/canister_runtime" }

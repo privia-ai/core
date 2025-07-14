@@ -1,8 +1,18 @@
 {
   "canisters": {
-    "token_ledger": {
-      "candid": "src/token_ledger/token_ledger.did",
-      "package": "token_ledger",
+    "dao" : {
+      "candid": "src/canisters/dao/dao.did",
+      "package": "dao",
+      "type": "rust"
+    },
+    "nft" : {
+      "candid": "src/canisters/nft/nft.did",
+      "package": "nft",
+      "type": "rust"
+    },
+    "token" : {
+      "candid": "src/canisters/token/token.did",
+      "package": "token",
       "type": "rust"
     }
   },
@@ -13,5 +23,11 @@
     }
   },
   "output_env_file": ".env",
-  "version": 1
+  "version": 1,
+  "networks": {
+    "local": {
+      "bind": "127.0.0.1:4949",
+      "type": "ephemeral"
+    }
+  }
 }
