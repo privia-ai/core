@@ -6,7 +6,7 @@ use super::cycles::CycleService;
 use super::interfaces::storage::*;
 use super::staking::StakingService;
 
-use abstractions::dao::{Cycle, Discount};
+use abstractions::dao::{Cycle, Discount, DiscountRequest};
 use abstractions::MetadataValue;
 use abstractions::nft::NftClient;
 use canister_runtime::CdkCallContext;
@@ -32,14 +32,14 @@ impl Default for DiscountConfig {
 }
 
 pub struct DiscountService {
-    config: DiscountConfig, 
+    config: DiscountConfig,
     cycles: Rc<RefCell<CycleService>>,
     storage: Rc<RefCell<dyn IDiscountStorage>>,
     nft: Rc<RefCell<NftClient<CdkCallContext>>>,
     staking: Rc<RefCell<StakingService>>,
     runtime: Rc<RefCell<dyn ICanisterRuntime>>,
  }
- 
+
 impl DiscountService {
     const MAX_DISCOUNT: f32 = 25.0;
 
@@ -61,11 +61,11 @@ impl DiscountService {
         }
     }
 
-    pub async fn get_max_discount(&self, wallet: Account, price: u128) -> f32 {
+    pub async fn get_max_discount(&self, hiver: Account, price: u128) -> f32 {
         let score = self
             .staking
             .borrow()
-            .get_current_staking_score(wallet)
+            .get_current_staking_score(hiver)
             .await;
 
         let calculator = self.build_calculator();
@@ -77,34 +77,35 @@ impl DiscountService {
     fn build_calculator(&self) -> ProportionCalculator {
         ProportionCalculator::new(Self::MAX_DISCOUNT)
     }
-    
+
     fn validate_account(&self, account: &Account, cycle: &Cycle) -> Result<(), String> {
         let discounts_count = self.storage.borrow().get_discount_index(account, cycle.number);
         if discounts_count >= self.config.discounts_per_cycle {
             return Err("Max number of discounts per cycle reached".to_string())
         }
-        
+
         Ok(())
     }
 
-    pub async fn mint_discount(&self, discount: Discount) -> u128 {
-        let caller = self.runtime.borrow().get_caller();
-        let account = Account::from(caller);
+    pub async fn mint_discount(&self, hiver: Account, discount_request: DiscountRequest) -> u128 {
         let current_cycle = self.cycles.borrow().get_current_cycle();
-        if let Err(msg) = self.validate_account(&account, &current_cycle) {
+        if let Err(msg) = self.validate_account(&hiver, &current_cycle) {
              panic!("{}", msg);
         }
-        
-        let token_id = self.nft.borrow().privia_mint_token(account, discount.to_metadata()).await.unwrap();
+
+        let token_id = self.nft.borrow().privia_mint_token(discount_request.owner, discount_request.to_metadata()).await.unwrap();
+
+        let discount = Discount::new(token_id, discount_request.value, discount_request.owner);
         self.storage
             .borrow_mut()
             .add_discount(current_cycle.number, discount);
-        self.storage.borrow_mut().increase_discount_index(account, current_cycle.number);
+
+        self.storage.borrow_mut().increase_discount_index(hiver, current_cycle.number);
         token_id
     }
 
-    pub async fn get_discount(&self, discount_id: u128) -> Discount {
-        let req_param = Vec::from([discount_id]);
+    pub async fn get_discount(&self, token_id: u128) -> Discount {
+        let req_param = Vec::from([token_id]);
 
         let metadata_response = self.nft.borrow().icrc7_token_metadata(req_param.clone()).await.unwrap();
         let metadata_opt = metadata_response.first().unwrap().clone();
@@ -114,9 +115,7 @@ impl DiscountService {
         let owner_opt = owner_response.first().unwrap().clone();
         let owner = owner_opt.unwrap();
 
-        let mut discount = Self::build_discount(discount_id, owner, &metadata);
-        discount.id = discount_id;
-
+        let discount = Self::build_discount(token_id, owner, &metadata);
         discount
     }
 

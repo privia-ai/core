@@ -1,5 +1,4 @@
-use crate::api::app_services::config::AppConfig;
-use crate::app::app_services;
+use crate::app::{app_services, AppConfig};
 use abstractions::dao::*;
 use abstractions::Account;
 use candid::Nat;
@@ -10,6 +9,18 @@ use ic_cdk::{init, query, update};
 #[init]
 fn init(config: AppConfig) {
     app_services::mgmt::init(config);
+}
+
+// hiving
+
+#[update]
+pub fn hiving_join() {
+    app_services::hiving::join()
+}
+
+#[update]
+pub fn hiving_leave() {
+    app_services::hiving::leave()
 }
 
 // voting
@@ -48,24 +59,24 @@ pub fn get_current_cycle() -> Cycle {
 
 // staking
 
-#[query(composite = true)]
+#[update]
 pub async fn get_staking_score(principal: Account) -> Nat {
     app_services::discounts::get_staking_score(principal).await
 }
 
 // discounts
 
-#[query(composite = true)]
-pub async fn calculate_discount(principal: Account, price: u128) -> f32 {
-    app_services::discounts::calculate_discount(principal, price).await
+#[update]
+pub async fn calculate_discount(hiver: Account, price: u128) -> f32 {
+    app_services::discounts::calculate_discount(hiver, price).await
 }
 
 #[update]
-pub async fn mint_discount(discount: Discount) -> u128 {
-    app_services::discounts::mint_discount(discount).await
+pub async fn mint_discount(hiver: Account, discount: DiscountRequest) -> u128 {
+    app_services::discounts::mint_discount(hiver, discount).await
 }
 
-#[query(composite = true)]
+#[update]
 pub async fn get_discount(dicount_id: u128) -> Discount {
     app_services::discounts::get_discount(dicount_id).await
 }

@@ -129,7 +129,7 @@ mod tests {
 
         rt_mock.borrow_mut().set_time_since_genesis_sec(5);
 
-        let cycle = cycles_service.get_cycle_details(2);
+        let _cycle = cycles_service.get_cycle_details(2);
 
         let cycle = cycles_service.get_current_cycle().number;
         assert_eq!(cycle, 1);

@@ -3,17 +3,32 @@
     "dao" : {
       "candid": "src/canisters/dao/dao.did",
       "package": "dao",
-      "type": "rust"
+      "type": "rust",
+      "skip_cargo_audit": true
+    },
+    "hiving" : {
+      "candid": "src/canisters/hiving/hiving.did",
+      "package": "hiving",
+      "type": "rust",
+      "skip_cargo_audit": true
+    },
+    "hiving_pool" : {
+      "candid": "src/canisters/hiving_pool/hiving_pool.did",
+      "package": "hiving_pool",
+      "type": "rust",
+      "skip_cargo_audit": true
     },
     "nft" : {
       "candid": "src/canisters/nft/nft.did",
       "package": "nft",
-      "type": "rust"
+      "type": "rust",
+      "skip_cargo_audit": true
     },
     "token" : {
       "candid": "src/canisters/token/token.did",
       "package": "token",
-      "type": "rust"
+      "type": "rust",
+      "skip_cargo_audit": true
     }
   },
   "defaults": {
@@ -26,7 +41,7 @@
   "version": 1,
   "networks": {
     "local": {
-      "bind": "127.0.0.1:4949",
+      "bind": "127.0.0.1:5949",
       "type": "ephemeral"
     }
   }

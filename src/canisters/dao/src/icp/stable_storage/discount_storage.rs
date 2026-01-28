@@ -57,7 +57,7 @@ impl IDiscountStorage for DiscountStorageStable {
 pub struct StorableDiscount(pub Discount);
 
 impl Storable for StorableDiscount {
-    fn to_bytes(&self) -> Cow<[u8]> {
+    fn to_bytes(&self) -> Cow<'_, [u8]> {
         Cow::Owned(candid::encode_one(&self.0).unwrap())
     }
 
@@ -113,7 +113,7 @@ impl DerefMut for StorableDiscount {
 struct BoundedAccount(pub Account);
 
 impl Storable for BoundedAccount {
-    fn to_bytes(&self) -> Cow<[u8]> {
+    fn to_bytes(&self) -> Cow<'_, [u8]> {
         let Account { owner, subaccount } = &self.0;
 
         let owner_bytes = owner.as_slice();

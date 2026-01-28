@@ -107,13 +107,6 @@ impl<'a> DemoMS2<'a> {
 
         self.change_actor(w2);
 
-        let discount = Discount::new(10f32, w2.account);
-        let discount_id = self.dao.mint_discount(discount.clone()).await.unwrap();
-        let discount_token = self.nft.icrc7_token_metadata(Vec::from([discount_id])).await.unwrap();
-
-        // Pause
-        press_enter(None);
-
         // Price = 15’000
         let price: u128 = 15000;
 
@@ -253,7 +246,7 @@ This change would require an update to the staking smart contract logic. Once ap
         let score = self.dao.get_staking_score(actor.account).await.unwrap();
         let discount = self
             .dao
-            .calculate_max_discount(actor.account, price)
+            .calculate_max_discount(&actor.account, &price)
             .await
             .unwrap();
         println!(

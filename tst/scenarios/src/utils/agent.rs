@@ -16,6 +16,7 @@ use std::{
     process::Command,
     rc::Rc
 };
+use crate::AppSettings;
 
 pub struct AgentCallContext {
     pub agent: Agent,
@@ -61,25 +62,25 @@ impl ICallContext for AgentCallContext {
     }
 }
 
-const DFX_URL: &str = "http://localhost:4949";
 
-pub async fn build_clients() -> (
+
+pub async fn build_clients(settings: &AppSettings) -> (
     TokenClient<AgentCallContext>,
     NftClient<AgentCallContext>,
     DaoClient<AgentCallContext>,
 ) {
-    let token_client = build_token_client().await;
-    let nft_client = build_nft_client().await;
-    let dao_client = build_dao_client().await;
+    let token_client = build_token_client(settings).await;
+    let nft_client = build_nft_client(settings).await;
+    let dao_client = build_dao_client(settings).await;
 
     (token_client, nft_client, dao_client)
 }
 
-pub async fn build_token_client() -> TokenClient<AgentCallContext> {
-    let agent_runtime = AgentCallContext::build(DFX_URL).await;
+pub async fn build_token_client(settings: &AppSettings) -> TokenClient<AgentCallContext> {
+    let agent_runtime = AgentCallContext::build(&settings.api_url).await;
     let agent_runtime = Rc::new(RefCell::new(agent_runtime));
 
-    let token_canister_id = get_canister_id("token").unwrap();
+    let token_canister_id = get_canister_id("token", settings).unwrap();
     let token_client = TokenClient {
         runtime: agent_runtime,
         canister_id: token_canister_id,
@@ -88,11 +89,11 @@ pub async fn build_token_client() -> TokenClient<AgentCallContext> {
     token_client
 }
 
-pub async fn build_nft_client() -> NftClient<AgentCallContext> {
-    let agent_runtime = AgentCallContext::build(DFX_URL).await;
+pub async fn build_nft_client(settings: &AppSettings) -> NftClient<AgentCallContext> {
+    let agent_runtime = AgentCallContext::build(&settings.api_url).await;
     let agent_runtime = Rc::new(RefCell::new(agent_runtime));
 
-    let nft_canister_id = get_canister_id("nft").unwrap();
+    let nft_canister_id = get_canister_id("nft", settings).unwrap();
     let nft_client = NftClient {
         runtime: agent_runtime,
         canister_id: nft_canister_id,
@@ -101,11 +102,11 @@ pub async fn build_nft_client() -> NftClient<AgentCallContext> {
     nft_client
 }
 
-pub async fn build_dao_client() -> DaoClient<AgentCallContext> {
-    let agent_runtime = AgentCallContext::build(DFX_URL).await;
+pub async fn build_dao_client(settings: &AppSettings) -> DaoClient<AgentCallContext> {
+    let agent_runtime = AgentCallContext::build(&settings.api_url).await;
     let agent_runtime = Rc::new(RefCell::new(agent_runtime));
 
-    let dao_canister_id = get_canister_id("dao").unwrap();
+    let dao_canister_id = get_canister_id("dao", settings).unwrap();
     let dao_client = DaoClient {
         runtime: agent_runtime,
         canister_id: dao_canister_id,
@@ -114,9 +115,10 @@ pub async fn build_dao_client() -> DaoClient<AgentCallContext> {
     dao_client
 }
 
-fn get_canister_id(canister_name: &str) -> Option<Principal> {
+fn get_canister_id(canister_name: &str, settings: &AppSettings) -> Option<Principal> {
     let output = Command::new("dfx")
         .args(["canister", "id", canister_name])
+        .args(["--network", &settings.network])
         .output()
         .ok()?;
 

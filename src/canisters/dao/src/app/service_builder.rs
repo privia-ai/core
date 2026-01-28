@@ -1,17 +1,13 @@
 use crate::{
     app::IConfigStorage,
     domain::{
-        cycles::CycleService,
-        discounts::DiscountService,
-        interfaces::storage::*,
+        cycles::CycleService, discounts::DiscountService, hiving::HivingService, interfaces::storage::*, staking::StakingService,
         voting::VotingService,
-        staking::StakingService
     },
     icp::service_builder_icp,
 };
-use abstractions::nft::NftClient;
-use abstractions::runtime::ICanisterRuntime;
-use abstractions::token::TokenClient;
+
+use abstractions::{nft::NftClient, runtime::ICanisterRuntime, token::TokenClient};
 use canister_runtime::CdkCallContext;
 use std::{cell::RefCell, rc::Rc};
 
@@ -23,25 +19,26 @@ pub fn build_runtime() -> Rc<RefCell<dyn ICanisterRuntime>> {
 
 // storages
 
-pub fn build_voting_storage() -> Rc<RefCell<dyn IVotingStorage>> {
+pub fn build_config_storage() -> Rc<RefCell<dyn IConfigStorage>> {
+    service_builder_icp::build_config_storage()
+}
+
+fn build_voting_storage() -> Rc<RefCell<dyn IVotingStorage>> {
     service_builder_icp::build_voting_storage()
 }
 
-pub fn build_discount_storage() -> Rc<RefCell<dyn IDiscountStorage>> {
+fn build_discount_storage() -> Rc<RefCell<dyn IDiscountStorage>> {
     service_builder_icp::build_discount_storage()
 }
 
-pub fn build_config_storage() -> Rc<RefCell<dyn IConfigStorage>> {
-    service_builder_icp::build_config_storage()
+fn build_hiving_storage() -> Rc<RefCell<dyn IHivingStorage>> {
+    service_builder_icp::build_hiving_storage()
 }
 
 // canister clients
 
 pub fn build_token_service() -> Rc<RefCell<TokenClient<CdkCallContext>>> {
-    let token_canister_id = build_config_storage()
-        .borrow()
-        .get_config()
-        .token_canister_id;
+    let token_canister_id = build_config_storage().borrow().get_config().token_canister_id;
     service_builder_icp::build_token_service(token_canister_id)
 }
 
@@ -87,10 +84,13 @@ pub fn build_staking_service() -> StakingService {
     let config = build_config_storage().borrow().get_config().staking.clone();
     let token = build_token_service();
     let cycles_service = build_cycles_service();
-    
-    StakingService::new(
-        config,
-        token,
-        cycles_service
-    )
+
+    StakingService::new(config, token, cycles_service)
+}
+
+pub fn build_hiving_service() -> HivingService {
+    let storage = build_hiving_storage();
+    let runtime = build_runtime();
+
+    HivingService::new(storage, runtime)
 }

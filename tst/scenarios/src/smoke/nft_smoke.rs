@@ -3,7 +3,7 @@ use icrc_ledger_types::icrc::generic_metadata_value::MetadataValue;
 use abstractions::nft::{NftClient, TransferArg};
 use crate::utils::{Actors, AgentCallContext};
 
-pub async fn check(mut nft: &NftClient<AgentCallContext>, actors: &Actors) {
+pub async fn check(nft: &NftClient<AgentCallContext>, actors: &Actors) {
 
     let the_account = actors.wallet1.account;
     let accs = Vec::from([actors.wallet1.account, actors.wallet2.account]);

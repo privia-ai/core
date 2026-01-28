@@ -1,8 +1,10 @@
 #!/bin/bash
 
-TOKEN_MINTER=$(dfx canister id --ic dao)
+NETWORK="${1}"
 
-dfx deploy nft --ic --argument="(
+TOKEN_MINTER=$(dfx canister id --network "$NETWORK" dao)
+
+ARGUMENT="(
   record {
     minting_account = record {
       owner = principal \"${TOKEN_MINTER}\";
@@ -22,3 +24,13 @@ dfx deploy nft --ic --argument="(
     permitted_drift = opt 5000000000; // 5 seconds in nanoseconds
   }
 )"
+echo "$ARGUMENT"
+
+#dfx deploy nft \
+#  --network "$NETWORK" \
+#  --argument "$ARGUMENT"
+
+dfx deploy nft \
+  --mode reinstall \
+  --network "$NETWORK" \
+  --argument "$ARGUMENT"

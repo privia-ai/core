@@ -93,7 +93,7 @@ impl IBalanceStore for BalanceStoreStable {
 struct TokensStorable(pub Tokens);
 
 impl Storable for TokensStorable {
-    fn to_bytes(&self) -> Cow<[u8]> {
+    fn to_bytes(&self) -> Cow<'_, [u8]> {
         Cow::Owned(candid::encode_one(&self.0).unwrap())
     }
 
@@ -179,7 +179,7 @@ impl ITransactionStore for TransactionsStoreStable {
 pub struct TokenConfigurationStorable(pub TokenConfiguration);
 
 impl Storable for TokenConfigurationStorable {
-    fn to_bytes(&self) -> Cow<[u8]> {
+    fn to_bytes(&self) -> Cow<'_, [u8]> {
         Cow::Owned(candid::encode_one(&self.0).unwrap())
     }
 
@@ -194,7 +194,7 @@ impl Storable for TokenConfigurationStorable {
 pub struct TransactionStorable(pub Transaction);
 
 impl Storable for TransactionStorable {
-    fn to_bytes(&self) -> Cow<[u8]> {
+    fn to_bytes(&self) -> Cow<'_, [u8]> {
         Cow::Owned(candid::encode_one(&self.0).unwrap())
     }
 
@@ -212,7 +212,7 @@ impl Storable for TransactionStorable {
 struct StakingLogEntryStorable(pub StakingLogEntry);
 
 impl Storable for StakingLogEntryStorable {
-    fn to_bytes(&self) -> Cow<[u8]> {
+    fn to_bytes(&self) -> Cow<'_, [u8]> {
         Cow::Owned(candid::encode_one(&self.0).unwrap())
     }
 
@@ -274,7 +274,7 @@ impl IStakingStore for StakingStoreStable {
 struct BoundedAccount(pub Account);
 
 impl Storable for BoundedAccount {
-    fn to_bytes(&self) -> Cow<[u8]> {
+    fn to_bytes(&self) -> Cow<'_, [u8]> {
         let Account { owner, subaccount } = &self.0;
 
         let owner_bytes = owner.as_slice();

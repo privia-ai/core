@@ -73,7 +73,7 @@ impl IVotingStorage for VotingStorageStable {
 struct StorableProposal(pub Proposal);
 
 impl Storable for StorableProposal {
-    fn to_bytes(&self) -> Cow<[u8]> {
+    fn to_bytes(&self) -> Cow<'_, [u8]> {
         Cow::Owned(candid::encode_one(&self.0).unwrap())
     }
 
@@ -88,7 +88,7 @@ impl Storable for StorableProposal {
 struct StorableVote(pub Vote);
 
 impl Storable for StorableVote {
-    fn to_bytes(&self) -> Cow<[u8]> {
+    fn to_bytes(&self) -> Cow<'_, [u8]> {
         Cow::Owned(candid::encode_one(&self.0).unwrap())
     }
 

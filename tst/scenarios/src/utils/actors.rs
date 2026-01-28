@@ -3,6 +3,7 @@ use candid::Principal;
 use ic_agent::Identity;
 use ic_agent::identity::Secp256k1Identity;
 use icrc_ledger_types::icrc1::account::Account;
+use crate::AppSettings;
 
 pub struct Actors {
     pub pr_token_controller: Actor,
@@ -39,14 +40,12 @@ impl Actor {
     }
 }
 
-const ROOT_DIR: &str = "/home/misha/Code/Custom/privia/internal/";
-
 impl Actors {
-    pub fn init() -> Self {
-        let ids_dir = Path::new(ROOT_DIR).join("src/smoke/identities/");
+    pub fn init(settings: &AppSettings) -> Self {
+        let ids_dir = Path::new(&settings.ids_dir);
         Self {
             pr_token_controller: Actor::from_pem_file(ids_dir.join("pr_token_controller.pem"), "token_controller".to_string()),
-            pr_token_minter: Actor::from_pem_file(ids_dir.join("pr_token_minter.pem"), "Token Minter".to_string()),
+            pr_token_minter: Actor::from_pem_file(ids_dir.join(format!("{}.pem", settings.token_minter_name)), "Token Minter".to_string()),            
             pr_nft_controller: Actor::from_pem_file(ids_dir.join("pr_nft_controller.pem"), "nft_controller".to_string()),
             pr_nft_minter: Actor::from_pem_file(ids_dir.join("pr_nft_minter.pem"), "nft_minter".to_string()),
             wallet1: Actor::from_pem_file(ids_dir.join("pr_hiver.pem"), "Wallet 1".to_string()),

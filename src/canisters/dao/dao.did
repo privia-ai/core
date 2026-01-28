@@ -53,10 +53,16 @@ type AppConfig = record {
   nft_canister_id: principal;
 };
 
+type DiscountValue = float32;
+
 type Discount = record {
   id: nat;
-  max_price: nat;
-  value: nat32;
+  value: DiscountValue;
+  owner: Account
+};
+
+type DiscountRequest = record {
+  value: DiscountValue;
   owner: Account
 };
 
@@ -67,6 +73,10 @@ type Cycle = record {
 };
 
 service : (AppConfig) -> {
+
+    hiving_join : () -> ();
+    hiving_leave : () -> ();
+
     voting_create_proposal : (ProposalType, vec nat8) -> (nat);
     voting_get_proposal : (nat) -> (opt Proposal) query;
     voting_vote : (nat, VoteOption) -> (nat);
@@ -78,6 +88,6 @@ service : (AppConfig) -> {
     get_staking_score: (Account) -> (nat);
 
     calculate_discount: (Account, nat) -> (float32);
-    mint_discount: (Discount) -> (nat);
+    mint_discount: (Account, DiscountRequest) -> (nat);
     get_discount: (nat) -> (Discount);
 }

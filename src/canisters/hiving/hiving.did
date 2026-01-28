@@ -1,0 +1,17 @@
+type DiscountValue = float32;
+
+type DiscountQuote = record {
+    discount_value : DiscountValue;
+    price : nat;
+};
+
+type InitArgs = record {
+    dao_address : principal;
+};
+
+service : (InitArgs) -> {
+    join_dao : () -> ();
+    leave_dao : () -> ();
+    quote_discount : (nat) -> (DiscountQuote);
+    buy_discount : (nat) -> (nat);
+}

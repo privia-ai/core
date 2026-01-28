@@ -1,19 +1,19 @@
-use abstractions::dao::{DaoClient, Discount};
+use abstractions::dao::{DaoClient, Discount, DiscountRequest};
 use crate::utils::{Actors, AgentCallContext};
 
 pub async fn check(dao: &DaoClient<AgentCallContext>, actors: &Actors) {
 
-    let proposer = actors.wallet1.account;
-    let voter_wtih_tokens =actors.wallet2.account;
-    let voter_wtihout_tokens =actors.wallet3.account;
+    let _proposer = actors.wallet1.account;
+    let _voter_wtih_tokens =actors.wallet2.account;
+    let _voter_wtihout_tokens =actors.wallet3.account;
 
     let discounter = actors.wallet4.account;
 
-    let the_account = actors.wallet1.account;
-    let accs = Vec::from([actors.wallet1.account, actors.wallet2.account]);
-    let token_ids = Vec::from([1,2,3]);
-    let prev = Some(0);
-    let take = Some(10);
+    let _the_account = actors.wallet1.account;
+    let _accs = Vec::from([actors.wallet1.account, actors.wallet2.account]);
+    let _token_ids = Vec::from([1,2,3]);
+    let _prev = Some(0);
+    let _take = Some(10);
 
     // let proposal_type = ProposalType::Generic;
     // let data = "Proposal data ...".to_string();
@@ -40,20 +40,17 @@ pub async fn check(dao: &DaoClient<AgentCallContext>, actors: &Actors) {
     println!("get_staking_score: {}", res);
 
     let price = 1500u128;
-    let discount_value = dao.calculate_max_discount(discounter, price).await.unwrap();
+    let discount_value = dao.calculate_max_discount(&discounter, &price).await.unwrap();
     println!("calculate_max_discount: {}", discount_value);
 
-    let discount = Discount {
-        owner: discounter,
+    let discount = DiscountRequest {
         value: discount_value,
-        id: 0
+        owner: discounter
     };
-    let token_id = dao.mint_discount(discount).await.unwrap();
+    let token_id = dao.mint_discount(discounter, discount).await.unwrap();
     println!("mint_discount: {}", token_id);
 
 }
-
-
 
 
 

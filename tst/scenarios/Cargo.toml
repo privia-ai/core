@@ -12,3 +12,5 @@ icrc-ledger-types = "0.1.10"
 regex = "1.11.1"
 tokio = { version = "1.46.1", features = ["rt", "rt-multi-thread", "macros"] }
 abstractions = { path = "../../src/shared/abstractions", features = ["with-chrono"] }
+config = "0.14.1"
+serde = "=1.0.219"

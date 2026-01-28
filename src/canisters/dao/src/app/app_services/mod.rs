@@ -1,8 +1,10 @@
-use crate::app::service_builder;
+pub mod hiving;
+
+use super::service_builder;
 
 pub mod mgmt {
+    use self::config::AppConfig;
     use super::*;
-    use crate::app::app_services::config::AppConfig;
 
     pub fn init(config: AppConfig) {
         let config_storage = service_builder::build_config_storage();
@@ -12,7 +14,7 @@ pub mod mgmt {
 
 pub mod discounts {
     use super::*;
-    use abstractions::dao::{Cycle, Discount};
+    use abstractions::dao::{Cycle, Discount, DiscountRequest};
     use candid::Nat;
     use icrc_ledger_types::icrc1::account::Account;
 
@@ -28,9 +30,9 @@ pub mod discounts {
         result
     }
 
-    pub async fn mint_discount(discount: Discount) -> u128 {
+    pub async fn mint_discount(hiver: Account, request: DiscountRequest) -> u128 {
         let service = service_builder::build_discount_service();
-        let result = service.mint_discount(discount).await;
+        let result = service.mint_discount(hiver, request).await;
         result
     }
 
@@ -40,9 +42,9 @@ pub mod discounts {
         result
     }
 
-    pub async fn calculate_discount(principal: Account, price: u128) -> f32 {
+    pub async fn calculate_discount(hiver: Account, price: u128) -> f32 {
         let service = service_builder::build_discount_service();
-        let result = service.get_max_discount(principal, price).await;
+        let result = service.get_max_discount(hiver, price).await;
         result
     }
 }
@@ -97,12 +99,12 @@ pub mod voting {
 pub mod config {
     use super::{super::IConfigStorage, service_builder};
     use crate::domain::cycles::CyclesConfig;
+    use crate::domain::discounts::DiscountConfig;
     use crate::domain::staking::StakingConfig;
     use candid::{CandidType, Deserialize, Principal};
     use serde::Serialize;
     use std::cell::RefCell;
     use std::rc::Rc;
-    use crate::domain::discounts::DiscountConfig;
 
     pub struct ConfigService {
         storage: Rc<RefCell<dyn IConfigStorage>>,

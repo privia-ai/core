@@ -1,0 +1,4 @@
+api_url = "https://icp-api.io"
+network = "ic"
+ids_dir = "./src/smoke/identities"
+token_minter_name = "pvd_owner"

@@ -1,3 +1,4 @@
+use candid::Principal;
 use icrc_ledger_types::icrc1::account::Account;
 use abstractions::dao::{Discount, Proposal, Vote};
 
@@ -9,8 +10,9 @@ pub trait IDiscountStorage {
 }
 
 pub trait IHivingStorage {
-    fn add_hiving_wallet(&mut self, wallet: Account);
-    fn get_hiving_wallets(&self) -> Vec<Account>;
+    fn add_hiving_canister(&mut self, canister_id: Principal);
+    fn remove_hiving_canister(&mut self, canister_id: Principal);
+    fn get_hiving_canisters(&self) -> Vec<Principal>;
     fn add_wallet_usage_per_cycle(&mut self, cycle_number: u64, wallet: Account) -> u32;
     fn get_wallet_usage_per_cycle(&self, cycle_number: u64, wallet: Account) -> u32;
 }

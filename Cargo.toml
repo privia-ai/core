@@ -1,6 +1,8 @@
 [workspace]
 members = [
     "src/canisters/dao",
+    "src/canisters/hiving",
+    "src/canisters/hiving_pool",
     "src/canisters/nft",
     "src/canisters/token",
     "src/shared/abstractions",

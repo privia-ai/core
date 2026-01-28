@@ -1,4 +1,4 @@
-use super::stable_storage::{ConfigStorageStable, DiscountStorageStable, VotingStorageStable};
+use super::stable_storage::{ConfigStorageStable, DiscountStorageStable, HivingStorageStorable, VotingStorageStable};
 use crate::app::IConfigStorage;
 use crate::domain::interfaces::storage::*;
 use abstractions::nft::NftClient;
@@ -15,6 +15,7 @@ thread_local! {
     static VOTING_STORAGE: Rc<RefCell<dyn IVotingStorage>> = Rc::new(RefCell::new(VotingStorageStable::init()));
     static CONFIG_STORAGE: Rc<RefCell<dyn IConfigStorage>> = Rc::new(RefCell::new(ConfigStorageStable::init()));
     static DISCOUNT_STORAGE: Rc<RefCell<dyn IDiscountStorage>> = Rc::new(RefCell::new(DiscountStorageStable::init()));
+    static HIVING_STORAGE: Rc<RefCell<dyn IHivingStorage>> = Rc::new(RefCell::new(HivingStorageStorable::init()));
 }
 
 pub fn build_runtime() -> Rc<RefCell<dyn ICanisterRuntime>> {
@@ -31,6 +32,10 @@ pub fn build_config_storage() -> Rc<RefCell<dyn IConfigStorage>> {
 
 pub fn build_discount_storage() -> Rc<RefCell<dyn IDiscountStorage>> {
     DISCOUNT_STORAGE.with(|rc| rc.clone())
+}
+
+pub fn build_hiving_storage() -> Rc<RefCell<dyn IHivingStorage>> {
+    HIVING_STORAGE.with(|rc| rc.clone())
 }
 
 pub fn build_token_service(canister_id: Principal) -> Rc<RefCell<TokenClient<CdkCallContext>>> {

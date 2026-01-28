@@ -12,3 +12,5 @@ pub use icrc_ledger_types::icrc1::account::Account;
 
 pub type Timestamp = u64;
 pub type Tokens = Nat;
+
+pub type DiscountValue = f32;

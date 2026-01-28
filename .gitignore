@@ -10,6 +10,9 @@
 # dfx temporary files
 .dfx/
 
+# icp-cli temporary files
+.icp/
+
 # generated files
 **/declarations/
 

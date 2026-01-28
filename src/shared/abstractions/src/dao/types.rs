@@ -1,7 +1,7 @@
-use crate::Timestamp;
+use crate::{DiscountValue, Timestamp};
 use candid::{CandidType, Deserialize, Principal};
-use icrc_ledger_types::icrc::generic_metadata_value::MetadataValue;
 use icrc_ledger_types::icrc1::account::Account;
+use icrc_ledger_types::icrc::generic_metadata_value::MetadataValue;
 use serde::Serialize;
 
 #[derive(Clone, Debug, Deserialize, Serialize, CandidType)]
@@ -96,23 +96,38 @@ pub struct CodeProposalData {
 #[derive(Clone, Debug, CandidType, Deserialize)]
 pub struct Discount {
     pub id: u128,
-    pub value: f32,
+    pub value: DiscountValue,
     pub owner: Account,
 }
 
-impl Discount {
-    pub fn new(value: f32, owner: Account) -> Self {
+#[derive(Clone, Debug, CandidType, Deserialize)]
+pub struct DiscountRequest {
+    pub value: DiscountValue,
+    pub owner: Account,
+}
+
+impl DiscountRequest {
+    pub fn new(value: DiscountValue, owner: Account) -> Self {
         Self {
-            id: 0,
             value,
-            owner,
+            owner
         }
     }
 }
 
 impl Discount {
+    pub fn new(id: u128, value: DiscountValue, owner: Account) -> Self {
+        Self {
+            id,
+            value,
+            owner
+        }
+    }
+}
+
+impl DiscountRequest {
     pub fn to_metadata(&self) -> Vec<(String, MetadataValue)> {
-        Vec::from([            
+        Vec::from([
             ("value".to_string(), MetadataValue::Text(self.value.to_string())),
         ])
     }

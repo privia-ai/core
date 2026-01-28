@@ -1,0 +1,25 @@
+type Account = record { owner : principal; subaccount : opt blob };
+
+type DiscountValue = float32;
+
+type DiscountQuotePool = record {
+  discount_value : DiscountValue;
+  price : nat;
+  hiver: principal
+};
+
+type InitArgs = record {
+  dao_address : principal;
+};
+
+service : (InitArgs) -> {
+  join_dao : () -> ();
+  leave_dao : () -> ();
+
+  join_pool : () -> ();
+  leave_pool : () -> ();
+  list_hivers : () -> (vec Account) query;
+
+  quote_discounts : (nat) -> (vec DiscountQuotePool);
+  buy_discount : (principal, nat) -> (nat);
+}

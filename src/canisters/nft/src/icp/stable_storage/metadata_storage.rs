@@ -30,7 +30,7 @@ impl IMetadataStore for MetadataStoreStable {
 struct CollectionMetadataStorable(pub CollectionMetadata);
 
 impl Storable for CollectionMetadataStorable {
-    fn to_bytes(&self) -> Cow<[u8]> {
+    fn to_bytes(&self) -> Cow<'_, [u8]> {
         Cow::Owned(candid::encode_one(&self.0).unwrap())
     }
 

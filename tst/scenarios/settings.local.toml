@@ -1,0 +1,4 @@
+api_url = "http://localhost:5949"
+network = "local"
+ids_dir = "./src/smoke/identities"
+token_minter_name = "pr_token_minter"

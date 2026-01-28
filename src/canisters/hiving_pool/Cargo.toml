@@ -1,0 +1,15 @@
+[package]
+name = "hiving_pool"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+candid = "0.10.14"
+ic-cdk = "0.18.5"
+serde = { version = "=1.0.219", features = ["derive"] }
+
+abstractions = { path = "../../shared/abstractions"}
+canister-runtime ={ path = "../../shared/canister_runtime"}
